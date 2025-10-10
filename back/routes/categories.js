@@ -1,87 +1,65 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { readData, writeData } = require('../utils/dataHelpers');
+const Category = require("../models/Category");
 
-// Initialize categories data
-let {categories, lastId} = readData('categories.json') || { categories: [], lastId: 0 };
-
-function saveCategories() {
-  writeData('categories.json', {categories, lastId});
-}
-
-// GET all categories
-router.get('/', (req, res) => {
-  res.json(categories);
+// Получить все категории
+router.get("/", async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.get('/user/:userId', (req, res) => {
-  const userId = parseInt(req.params.userId);
-  const userCategories = categories.filter(category => 
-    category.user_id.includes(userId)
-  );
-  
-  res.json(userCategories);
+// Получить категорию по ID
+router.get("/:id", async (req, res) => {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    if (!category) return res.status(404).json({ message: "Category not found" });
+    res.json(category);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.get('/category/:categoryId', (req, res) => {
-  const categoryId = parseInt(req.params.categoryId);
-  const userCategories = categories.filter(category => 
-    category.category_id.includes(categoryId)
-  );
-  
-  res.json(userCategories);
+// Создать категорию
+router.post("/new-category", async (req, res) => {
+  try {
+    const { name, type } = req.body; // можно добавить icon, color если хочешь
+    if (!name || !type) return res.status(400).json({ message: "Name and type are required" });
+
+    const category = await Category.create({ name, type });
+    res.status(201).json(category);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const category_id = parseInt(req.params.id);
-  const category = categories.find(b => b.id === category_id);
-  if (!category) return res.status(404).json({ message: 'Category not found' });
+// Обновить категорию
+router.put("/update/:id", async (req, res) => {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    if (!category) return res.status(404).json({ message: "Category not found" });
 
-  res.json(category);
+    await category.update(req.body);
+    res.json(category);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// POST new category
-router.post('/new-category', (req, res) => {
-  const { user_id, name, icon, color, type } = req.body;
-  lastId = lastId + 1
-  const newCategory = {
-    id: lastId,
-    user_id: Array.isArray(user_id) ? user_id : [],
-    name,
-    icon,
-    color,
-    type,
-    createdAt: new Date().toISOString(),
-  };
-  categories.push(newCategory);
-  saveCategories();
-  res.status(201).json(newCategory);
-});
+// Удалить категорию
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    if (!category) return res.status(404).json({ message: "Category not found" });
 
-// UPDATE category
-router.put('/update/:id', (req, res) => {
-  const category_id = parseInt(req.params.id);
-  const category = categories.find(b => b.id === category_id);
-  if (!category) return res.status(404).json({ message: 'Category not found' });
-
-  const { user_id, amount, type } = req.body;
-  category.user_id = Array.isArray(user_id) ? user_id : category.user_id;
-  category.amount = amount || category.amount;
-  category.type = type || category.type;
-  category.category_id = Array.isArray(category_id) ? category_id : category.category_id;
-  category.comment = comment || category.comment;
-  category.date = date || category.date;
-
-  saveCategories();
-  res.json(category);
-});
-
-// DELETE category
-router.delete('/delete/:id', (req, res) => {
-  const category_id = parseInt(req.params.id);
-  categories = categories.filter(b => b.id !== category_id);
-  saveCategories();
-  res.status(204).send();
+    await category.destroy();
+    res.json({ message: "Category deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

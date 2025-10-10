@@ -1,4 +1,7 @@
-// server.js (or app.js/index.js)
+const sequelize = require("./db");         
+const User = require("./models/User");     
+const Category = require("./models/Category"); 
+const Transaction = require("./models/Transaction"); 
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -67,6 +70,13 @@ app.get('/', (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log("✅ Database synced");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ Database connection error:", err);
+  });

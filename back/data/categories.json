@@ -81,7 +81,17 @@
       "color": "#000000",
       "type": "expense",
       "createdAt": "2025-05-12T05:10:42.775Z"
+    },
+    {
+      "id": 9,
+      "user_id": [
+        1
+      ],
+      "name": "Гулянка",
+      "color": "#8fd624",
+      "type": "expense",
+      "createdAt": "2025-10-01T00:54:58.502Z"
     }
   ],
-  "lastId": 8
+  "lastId": 9
 }

@@ -20,7 +20,11 @@
       "name": "name",
       "email": "aruzhan@gmail.com",
       "password": "$2b$08$.tiGH1R5BI2qaLNwuw1khO9cz0E01bssWexRJZzx3M0FBQqiv8XlG"
+    },
+    {
+      "id": 6,
+      "password": "$2b$08$m0Vun4CCAQEZw8rTZwspTuyd8m9FxA0JB3kwgcIS/4ddscWBWHEV2"
     }
   ],
-  "lastId": 5
+  "lastId": 6
 }
