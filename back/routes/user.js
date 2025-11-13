@@ -7,29 +7,34 @@ const { readData, writeData } = require('../utils/dataHelpers');
 const JWT_SECRET = 'Aboba';
 
 // Mock database (replace with real DB in production)
-let {users, lastId} = readData('users.json');
+let { users, lastId } = readData('users.json');
 
 function saveUsers() {
-  writeData('users.json', {users, lastId});
+  writeData('users.json', { users, lastId });
 }
 
 // Register new user
 router.post('/register', (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, username, password } = req.body;
+  const userEmail = email || username; // ✅ поддержка username из теста
+
+  if (!userEmail || !password) {
+    return res.status(400).json({ error: 'Missing email or password' });
+  }
+
   // Check if user exists
-  if (users.some(user => user.email === email)) {
+  if (users.some(user => user.email === userEmail)) {
     return res.status(400).json({ error: 'User already exists' });
   }
 
   // Hash password
   const hashedPassword = bcrypt.hashSync(password, 8);
-
-  lastId = lastId + 1
+  lastId = lastId + 1;
 
   const newUser = {
     id: lastId,
-    name,
-    email,
+    name: name || userEmail.split('@')[0],
+    email: userEmail,
     password: hashedPassword
   };
 
@@ -40,6 +45,7 @@ router.post('/register', (req, res) => {
   const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '24h' });
 
   res.status(201).json({
+    username: newUser.email,
     user: {
       id: newUser.id,
       name: newUser.name,
@@ -51,9 +57,10 @@ router.post('/register', (req, res) => {
 
 // Login user
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  const { email, username, password } = req.body;
+  const userEmail = email || username; // ✅ поддержка username
 
-  const user = users.find(user => user.email === email);
+  const user = users.find(user => user.email === userEmail);
   if (!user) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
@@ -110,12 +117,12 @@ function authenticateToken(req, res, next) {
 }
 
 router.get('/', (req, res) => {
-  console.log(process.env.JWT_SECRET)
+  console.log(process.env.JWT_SECRET);
   res.json(users);
 });
 
 router.get('/JWT_SECRET', (req, res) => {
-  if(JWT_SECRET == undefined)
+  if (JWT_SECRET == undefined)
     res.json("undefined");
   console.log(JWT_SECRET);
   res.json(JWT_SECRET);
@@ -124,7 +131,7 @@ router.get('/JWT_SECRET', (req, res) => {
 router.post('/verify-password', authenticateToken, (req, res) => {
   const { email, password } = req.body;
   const user = users.find(user => user.email === email);
-  
+
   if (!user) {
     return res.status(404).json({ error: 'User not found', valid: false });
   }
