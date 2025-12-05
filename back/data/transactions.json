@@ -1,0 +1,74 @@
+{
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": [
+        1
+      ],
+      "amount": 54847000,
+      "type": "income",
+      "category_id": [
+        1
+      ],
+      "comment": "Aboba",
+      "date": "2025-05-09T15:12:02.535Z",
+      "createdAt": "2025-05-09T15:12:53.908Z"
+    },
+    {
+      "id": 2,
+      "user_id": [
+        1
+      ],
+      "amount": 79999,
+      "type": "expense",
+      "category_id": [
+        4,
+        8
+      ],
+      "comment": "",
+      "date": "2025-05-12",
+      "createdAt": "2025-05-12T05:10:48.232Z"
+    },
+    {
+      "id": 3,
+      "user_id": [
+        1
+      ],
+      "amount": 9885454,
+      "type": "expense",
+      "category_id": [
+        7
+      ],
+      "comment": " бла бла бла",
+      "date": "2025-05-12",
+      "createdAt": "2025-05-12T05:36:16.065Z"
+    },
+    {
+      "id": 4,
+      "user_id": [
+        1
+      ],
+      "amount": 4545496,
+      "type": "income",
+      "category_id": [
+        6
+      ],
+      "comment": "",
+      "date": "2025-05-12",
+      "createdAt": "2025-05-12T05:37:08.577Z"
+    },
+    {
+      "id": 5,
+      "user_id": [
+        1
+      ],
+      "amount": 6516151,
+      "type": "income",
+      "category_id": [],
+      "comment": "вв",
+      "date": "2025-11-13",
+      "createdAt": "2025-11-13T10:34:31.562Z"
+    }
+  ],
+  "lastId": 5
+}

@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+#root {
+  width: 100%;
+}
+
+#dark{
+  background-color: aliceblue;
+}
